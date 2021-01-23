@@ -1,3 +1,5 @@
+import random
+
 cells = {
     "a1": " ",
     "b1": " ",
@@ -32,6 +34,13 @@ def move_wins():
         return False
 
 
+def computer_move():
+    available_spots = {key: " " for (key, value) in cells.items() if value == " "}
+    choice = random.choice(list(available_spots.items()))
+    print(f"Computer chose {choice[0]}")
+    cells[choice[0]] = "O"
+
+
 def print_board_state():
     print(
         f"""
@@ -50,7 +59,12 @@ def print_board_state():
 
 
 turn = "X"
+computer_player = False
 game_active = True
+
+if input("\n1) Play against computer\n2) 2 player game\n\nSelect game option ('1' or '2'): ") == "1":
+    computer_player = True
+
 while game_active:
 
     print_board_state()
@@ -67,16 +81,19 @@ while game_active:
     else:
         turn_not_complete = True
         while turn_not_complete:
-            new_position = input(f"It's {turn}'s turn. Choose an available cell (e.g. 'a1'): ").lower()
-            # Check if valid move
-            if new_position not in cells:
-                print("Invalid cell. Try again.")
-                continue
-            elif cells[new_position] == "X" or cells[new_position] == "O":
-                print("That's already taken. Try again.")
-                continue
-            # It's valid, make the move
-            cells[new_position] = turn
+            if computer_player and turn == "O":
+                computer_move()
+            else:
+                new_position = input(f"It's {turn}'s turn. Choose an available cell (e.g. 'a1'): ").lower()
+                # Check if valid move
+                if new_position not in cells:
+                    print("Invalid cell. Try again.")
+                    continue
+                elif cells[new_position] == "X" or cells[new_position] == "O":
+                    print("That's already taken. Try again.")
+                    continue
+                # It's valid, make the move
+                cells[new_position] = turn
             # Check if we have a winner
             if move_wins():
                 print_board_state()
